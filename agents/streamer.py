@@ -2,7 +2,6 @@
 Live WebSocket Distributed Component Telemetry Streamer for target-degradation-protac-agent.
 """
 import json
-import asyncio
 from typing import List, Dict, Any
 
 class TelemetryBroadcaster:

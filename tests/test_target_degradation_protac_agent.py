@@ -63,3 +63,47 @@ def test_supervisor_consensus_and_audit():
     assert main(["audit", "--task-id", "CLI-TEST-01"]) == 0
     assert main(["chat", "Explain", "specifications"]) == 0
     assert main(["verify-audit"]) == 0
+
+
+def test_input_validation_rejects_nan():
+    """Metric values must be finite - NaN should be rejected."""
+    with pytest.raises(ValueError, match="finite"):
+        SystemTaskPayload(task_id="T1", target_identifier="KEY-01", primary_metric=float("nan"))
+
+
+def test_input_validation_rejects_infinity():
+    """Metric values must be finite - infinity should be rejected."""
+    with pytest.raises(ValueError, match="finite"):
+        SystemTaskPayload(task_id="T1", target_identifier="KEY-01", primary_metric=float("inf"))
+
+
+def test_input_validation_rejects_empty_identifiers():
+    """Identifier fields must be non-empty."""
+    with pytest.raises(ValueError, match="non-empty"):
+        SystemTaskPayload(task_id="", target_identifier="KEY-01", primary_metric=10.0)
+
+    with pytest.raises(ValueError, match="non-empty"):
+        SystemTaskPayload(task_id="T1", target_identifier="", primary_metric=10.0)
+
+
+def test_batch_file_not_found():
+    """Batch command should return error code for missing file."""
+    result = main(["batch", "-i", "nonexistent_file.csv"])
+    assert result == 1
+
+
+def test_batch_with_malformed_data(tmp_path):
+    """Batch command should skip malformed rows and continue processing."""
+    import csv
+    input_file = tmp_path / "test_input.csv"
+    output_file = tmp_path / "test_output.csv"
+
+    with open(input_file, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["task_id", "target_identifier", "primary_metric", "secondary_metric"])
+        writer.writerow(["T1", "KEY-01", "10.0", "5.0"])  # Valid row
+        writer.writerow(["T2", "KEY-02", "invalid", "5.0"])  # Invalid metric
+
+    result = main(["batch", "-i", str(input_file), "-o", str(output_file)])
+    assert result == 0
+    assert output_file.exists()
