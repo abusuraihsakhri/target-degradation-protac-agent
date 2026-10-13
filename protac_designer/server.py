@@ -15,7 +15,7 @@ def create_app():
 
         app = FastAPI(
             title="PROTAC-Designer: Heterobifunctional Degrader Linker & Ternary Complex Agent",
-            description="Models E3 ligase recruiters (CRBN, VHL) and target warhead geometries, optimizing PEG/alkyl linker lengths for productive ternary complex formation.",
+            description="Legacy numeric-threshold evaluator. Does not simulate binding, linker conformations, or ternary-complex energetics.",
             version="2.0.0-FRONTIER",
         )
 
