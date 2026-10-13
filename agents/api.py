@@ -12,7 +12,7 @@ supervisor = SystemSupervisor(model_provider="mock")
 
 app = FastAPI(
     title="Target Degradation Protac Agent API",
-    description="Enterprise Distributed Component Platform (AI Drug Discovery, Structural Biology & Wet-Lab Robotics)",
+    description="Deterministic generic-metric screening. No molecular docking, PROTAC efficacy prediction, or clinical validation.",
     version="3.0.0-ENTERPRISE",
 )
 
