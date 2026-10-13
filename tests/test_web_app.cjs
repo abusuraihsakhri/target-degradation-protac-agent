@@ -40,3 +40,30 @@ test("rejected identifiers and nonfinite values", () => {
   assert.throws(() => evaluate(make({primary_metric:""})), /finite/);
   assert.throws(() => evaluate(make({secondary_metric:"not a number"})), /finite/);
 });
+
+test("browser form updates real DOM outputs without network", () => {
+  const vm = require("node:vm");
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const elements = {
+    "audit-form": {addEventListener(name, cb) {this[name] = cb;}},
+    "outputConsole": {textContent: ""},
+    "m-status": {textContent: "READY"},
+    "m-tasks": {textContent: "0"},
+    task_id: {value: "CASE"},
+    target_id: {value: "TARGET"},
+    primary_metric: {value: "30"},
+    secondary_metric: {value: "5"},
+    status_descriptor: {value: "NOMINAL"},
+    is_critical: {checked: false}
+  };
+  const document = {getElementById(id) {return elements[id] || null;}};
+  const source = fs.readFileSync(path.join(__dirname, "../web/app.js"), "utf8");
+  vm.runInNewContext(source, {document, window: {}});
+  assert.equal(typeof elements["audit-form"].submit, "function");
+  elements["audit-form"].submit({preventDefault() {}});
+  const result = JSON.parse(elements.outputConsole.textContent);
+  assert.equal(result.overall_urgency, "ELEVATED_RISK");
+  assert.equal(elements["m-tasks"].textContent, "1");
+  assert.equal(elements["m-status"].textContent, "REVIEW");
+});
