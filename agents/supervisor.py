@@ -3,6 +3,7 @@ Supervisor Orchestrator & Operations Intelligence for Target Degradation Protac 
 Domain: AI Drug Discovery, Structural Biology & Wet-Lab Robotics
 """
 import uuid
+import json
 from typing import Dict, Any, List, Optional
 from .base import AuditLogger, ActionExecutor, PHIGuard
 from .models import SystemTaskPayload, AgentAlert, ConsensusDossier, UrgencyLevel, SystemIntegrityStatus
@@ -25,6 +26,9 @@ class SystemSupervisor:
         PHIGuard.assert_no_phi(payload.task_id)
         PHIGuard.assert_no_phi(payload.target_identifier)
         PHIGuard.assert_no_phi(payload.status_descriptor)
+        # Include nested attributes: arbitrary metadata may contain identifiers.
+        PHIGuard.assert_no_phi(json.dumps(payload.attributes, ensure_ascii=False))
+        PHIGuard.assert_no_phi(actor)
 
         # Multi-worker evaluations
         all_alerts: List[AgentAlert] = []
