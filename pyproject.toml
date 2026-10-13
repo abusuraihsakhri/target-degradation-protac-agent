@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "target-degradation-protac-agent"
+name = "target-degradation-protac-engine"
 version = "2.0.0"
-description = "PROTAC-Designer: Heterobifunctional Degrader Linker & Ternary Complex Engine"
+description = "Deterministic metric screening tools with rule-based audit workflows"
 readme = "README.md"
 authors = [{ name = "Dr. Abu Suraih Sakhri", email = "abusuraih@example.com" }]
 license = { text = "MIT" }
@@ -35,5 +35,5 @@ include = ["agents*", "protac_designer*"]
 namespaces = false
 
 [project.urls]
-Homepage = "https://github.com/abusuraihsakhri/target-degradation-protac-engine"
+Homepage = "https://github.com/abusuraihsakhri/target-degradation-protac-agent"
 Repository = "https://github.com/abusuraihsakhri/target-degradation-protac-agent.git"
